@@ -30,7 +30,6 @@ public class AlbumService {
     private final FavoriteRecordRepository favoriteRecordRepository;
     private final RecordRatingRepository recordRatingRepository;
 
-    // ==================== АЛЬБОМЫ ====================
 
     @Transactional(readOnly = true)
     public Page<AlbumResponse> getAlbums(Long userId, int page, String sortBy) {
@@ -75,7 +74,6 @@ public class AlbumService {
         albumRepository.delete(album);
     }
 
-    // ==================== ЗАПИСИ В АЛЬБОМЕ ====================
 
     @Transactional(readOnly = true)
     public Page<RecordResponse> getRecordsInAlbum(Long albumId, Long userId, int page, String sortBy) {
@@ -141,7 +139,6 @@ public class AlbumService {
         albumRecordRepository.save(newAlbumRecord);
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНОЕ ====================
 
     private Album findAlbumOrThrow(Long albumId, Long userId) {
         return albumRepository.findById(albumId)

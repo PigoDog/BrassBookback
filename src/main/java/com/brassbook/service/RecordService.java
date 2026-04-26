@@ -25,7 +25,6 @@ public class RecordService {
     private final FavoriteRecordRepository favoriteRecordRepository;
     private final RecordRatingRepository recordRatingRepository;
 
-    // ==================== МОИ ЗАПИСИ ====================
 
     @Transactional(readOnly = true)
     public Page<RecordResponse> getMyRecords(Long userId, int page, String sortBy) {
@@ -45,7 +44,6 @@ public class RecordService {
         recordRepository.save(record);
     }
 
-    // ==================== ИЗБРАННОЕ ====================
 
     @Transactional(readOnly = true)
     public Page<RecordResponse> getFavorites(Long userId, int page, String sortBy) {
@@ -82,7 +80,6 @@ public class RecordService {
         favoriteRecordRepository.deleteByUserIdAndRecordId(userId, recordId);
     }
 
-    // ==================== ОЦЕНКИ ====================
 
     @Transactional
     public RecordResponse rateRecord(Long userId, Long recordId, RateRecordRequest request) {
@@ -109,7 +106,6 @@ public class RecordService {
         return toRecordResponse(record, userId);
     }
 
-    // ==================== ПОИСК ====================
 
     @Transactional(readOnly = true)
     public Page<RecordResponse> searchRecords(Long userId, String query, int page, String sortBy) {
@@ -119,7 +115,6 @@ public class RecordService {
                 .map(record -> toRecordResponse(record, userId));
     }
 
-    // ==================== СКАЧИВАНИЕ ====================
 
     @Transactional(readOnly = true)
     public String getDownloadUrl(Long userId, Long recordId) {
@@ -134,7 +129,6 @@ public class RecordService {
         return record.getFileUrl();
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНОЕ ====================
 
     private Record findRecordOrThrow(Long recordId) {
         Record record = recordRepository.findById(recordId)

@@ -9,7 +9,7 @@ import lombok.Data;
 public class RateRecordRequest {
 
     @NotNull(message = "Оценка обязательна")
-    @Min(value = 1, message = "Минимальная оценка — 1")
-    @Max(value = 5, message = "Максимальная оценка — 5")
+    @Min(value = 1, message = "Минимальная оценка - 1")
+    @Max(value = 5, message = "Максимальная оценка - 5")
     private Integer rating;
 }

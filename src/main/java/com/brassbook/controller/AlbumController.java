@@ -21,7 +21,6 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
-    // Получить альбомы с сортировкой
     @GetMapping
     public ResponseEntity<Page<AlbumResponse>> getAlbums(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -31,7 +30,6 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getAlbums(userId, page, sortBy));
     }
 
-    // Создать альбом
     @PostMapping
     public ResponseEntity<AlbumResponse> createAlbum(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -40,7 +38,6 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.createAlbum(userId, request));
     }
 
-    // Переименовать альбом
     @PutMapping("/{id}/rename")
     public ResponseEntity<AlbumResponse> renameAlbum(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -50,7 +47,6 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.renameAlbum(id, userId, request.getName()));
     }
 
-    // Удалить альбом
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlbum(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -60,7 +56,6 @@ public class AlbumController {
         return ResponseEntity.noContent().build();
     }
 
-    // Записи в альбоме
     @GetMapping("/{id}/records")
     public ResponseEntity<Page<RecordResponse>> getRecords(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -71,7 +66,6 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getRecordsInAlbum(id, userId, page, sortBy));
     }
 
-    // Добавить запись в альбом
     @PostMapping("/{albumId}/records/{recordId}")
     public ResponseEntity<Void> addRecordToAlbum(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -82,7 +76,6 @@ public class AlbumController {
         return ResponseEntity.ok().build();
     }
 
-    // Переместить запись между альбомами
     @PutMapping("/records/{recordId}/move")
     public ResponseEntity<Void> moveRecord(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -94,7 +87,6 @@ public class AlbumController {
         return ResponseEntity.ok().build();
     }
 
-    // Заглушка — позже заменим на реальный метод
     private Long getUserId(UserDetails userDetails) {
         return Long.valueOf(userDetails.getUsername());
     }

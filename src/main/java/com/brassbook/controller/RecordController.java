@@ -21,7 +21,6 @@ public class RecordController {
 
     private final RecordService recordService;
 
-    // Мои записи
     @GetMapping("/my")
     public ResponseEntity<Page<RecordResponse>> getMyRecords(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -32,7 +31,6 @@ public class RecordController {
         return ResponseEntity.ok(recordService.getMyRecords(userId, page, sortBy));
     }
 
-    // Избранное
     @GetMapping("/favorites")
     public ResponseEntity<Page<RecordResponse>> getFavorites(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -43,7 +41,6 @@ public class RecordController {
         return ResponseEntity.ok(recordService.getFavorites(userId, page, sortBy));
     }
 
-    // Добавить запись в избранное
     @PostMapping("/{recordId}/favorite")
     public ResponseEntity<Void> addToFavorites(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -54,7 +51,6 @@ public class RecordController {
         return ResponseEntity.ok().build();
     }
 
-    // Удалить запись из избранного
     @DeleteMapping("/{recordId}/favorite")
     public ResponseEntity<Void> removeFromFavorites(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -65,7 +61,6 @@ public class RecordController {
         return ResponseEntity.noContent().build();
     }
 
-    // Оценить запись
     @PutMapping("/{recordId}/rating")
     public ResponseEntity<RecordResponse> rateRecord(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -76,7 +71,6 @@ public class RecordController {
         return ResponseEntity.ok(recordService.rateRecord(userId, recordId, request));
     }
 
-    // Поиск по записям и альбомам
     @GetMapping("/search")
     public ResponseEntity<Page<RecordResponse>> searchRecords(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -88,7 +82,6 @@ public class RecordController {
         return ResponseEntity.ok(recordService.searchRecords(userId, query, page, sortBy));
     }
 
-    // Удалить свою запись полностью
     @DeleteMapping("/{recordId}")
     public ResponseEntity<Void> deleteMyRecord(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -99,7 +92,6 @@ public class RecordController {
         return ResponseEntity.noContent().build();
     }
 
-    // Скачать запись
     @GetMapping("/{recordId}/download")
     public ResponseEntity<Void> downloadRecord(
             @AuthenticationPrincipal UserDetails userDetails,
