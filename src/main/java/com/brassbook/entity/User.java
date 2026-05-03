@@ -1,7 +1,12 @@
 package com.brassbook.entity;
 
 import com.brassbook.enums.UserRole;
+import com.brassbook.enums.UserStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,12 +29,32 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status;
+
+    @Column(name = "is_confirmed", nullable = false)
+    private Boolean isConfirmed;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "company_name")
+    private String companyName;
+
+    private String profession;
+
+    private Long inn;
+
+    @Column(name = "photo_url")
+    private String photoUrl;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
