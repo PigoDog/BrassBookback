@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -22,6 +23,8 @@ import java.util.Random;
 public class RegistrationService {
 
     private final UserRepository userRepository;
+    private final CustomUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final StringRedisTemplate redisTemplate;
 
@@ -44,31 +47,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("Invalid code");
         }
 
-        User user;
-        if (userToCreate.getRoleName() == UserRole.ROLE_PERSONAL) {
-            user = User.builder()
-                    .email(userToCreate.getEmail())
-                    .password(userToCreate.getPassword())
-                    .role(userToCreate.getRoleName())
-                    .status(userToCreate.getStatus())
-                    .isConfirmed(true)
-                    .build();
-        } else {
-            user = User.builder()
-                    .email(userToCreate.getEmail())
-                    .password(userToCreate.getPassword())
-                    .role(userToCreate.getRoleName())
-                    .status(userToCreate.getStatus())
-                    .isConfirmed(true)
-                    .firstName(userToCreate.getFirstName())
-                    .lastName(userToCreate.getLastName())
-                    .companyName(userToCreate.getCompanyName())
-                    .profession(userToCreate.getProfession())
-                    .inn(userToCreate.getInn())
-                    .build();
-        }
-
-        User newUser = userRepository.save(user);
+        User newUser = userDetailsService.createNewUser(userToCreate);
         return new RegistrationResponse(newUser.getId());
     }
 
@@ -102,7 +81,7 @@ public class RegistrationService {
         if (!isPasswordValid(passwordRequest.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
-        updateUser.setPassword(passwordRequest.getPassword());
+        updateUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
         userRepository.save(updateUser);
     }
 
@@ -129,9 +108,12 @@ public class RegistrationService {
     }
 
     private boolean isInvalidCompanyUser(RegistrationRequest user) {
+        if (user.getInn() == null) {
+            return true;
+        }
         int innLength = user.getInn().toString().length();
-        return user.getFirstName().isEmpty() || user.getLastName().isEmpty() ||
-                user.getCompanyName().isEmpty() || user.getProfession().isEmpty() ||
+        return user.getFirstName() == null || user.getLastName() == null ||
+                user.getCompanyName() == null || user.getProfession() == null ||
                 innLength != 10 && innLength != 12;
     }
 }
