@@ -39,6 +39,15 @@ public class RegistrationController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PostMapping("/refreshCode")
+    public ResponseEntity<Void> refreshCode(
+            @RequestBody @Valid CodeRequest codeRequest
+    ) {
+        log.info("Called refreshCode");
+        registrationService.refreshCode(codeRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @PutMapping("/registration")
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid PasswordRequest passwordRequest

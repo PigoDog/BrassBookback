@@ -30,21 +30,21 @@ public class RegistrationService {
 
     public RegistrationResponse createUser(RegistrationRequest userToCreate) {
         if (userRepository.existsByEmail(userToCreate.getEmail())) {
-            throw new IllegalArgumentException("Such an email already exists");
+            throw new IllegalArgumentException("Пользователь с таким email же существует");
         }
         if (!isPasswordValid(userToCreate.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
+            throw new IllegalArgumentException("Некорректный пароль");
         }
         if (userToCreate.getRoleName() == UserRole.ROLE_ANONYMOUS) {
-            throw new IllegalArgumentException("Invalid user role");
+            throw new IllegalArgumentException("Нельзя создать анонимного пользователя");
         }
         if (userToCreate.getRoleName() == UserRole.ROLE_COMPANY && isInvalidCompanyUser(userToCreate)) {
-            throw new IllegalArgumentException("Invalid data from a company user");
+            throw new IllegalArgumentException("Некорректные данные для корпоративного пользователя");
         }
 
         String savedCode = redisTemplate.opsForValue().get(userToCreate.getEmail());
         if (savedCode == null || !savedCode.equals(userToCreate.getCode())) {
-            throw new IllegalArgumentException("Invalid code");
+            throw new IllegalArgumentException("Неверный код");
         }
 
         User newUser = userDetailsService.createNewUser(userToCreate);
@@ -53,12 +53,39 @@ public class RegistrationService {
 
     public void sendCode(CodeRequest codeRequest) {
         if (userRepository.existsByEmail(codeRequest.getEmail())) {
-            throw new IllegalArgumentException("Such an email already exists");
+            throw new IllegalArgumentException("Пользователь с таким email же существует");
         }
         if (!codeRequest.getIsConfirmed()) {
-            throw new IllegalArgumentException("User did not give an agreement");
+            throw new IllegalArgumentException("Примите соглашение с политикой ОПД");
         }
+        sendMailCode(codeRequest);
+    }
 
+    public void refreshCode(CodeRequest codeRequest) {
+        if (!userRepository.existsByEmail(codeRequest.getEmail())) {
+            throw new IllegalArgumentException("Пользователя с таким email не существует");
+        }
+        if (!codeRequest.getIsConfirmed()) {
+            throw new IllegalArgumentException("Примите соглашение с политикой ОПД");
+        }
+        sendMailCode(codeRequest);
+    }
+
+    public void updatePassword(PasswordRequest passwordRequest) {
+        User updateUser = userRepository.findByEmail(passwordRequest.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("Пользователя с таким email не существует"));
+        if (!isPasswordValid(passwordRequest.getPassword())) {
+            throw new IllegalArgumentException("Неверный пароль");
+        }
+        String savedCode = redisTemplate.opsForValue().get(passwordRequest.getEmail());
+        if (savedCode == null || !savedCode.equals(passwordRequest.getCode())) {
+            throw new IllegalArgumentException("Неверный код");
+        }
+        updateUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
+        userRepository.save(updateUser);
+    }
+
+    private void sendMailCode(CodeRequest codeRequest) {
         String code = String.format("%06d", new Random().nextInt(999999));
 
         redisTemplate.opsForValue().set(
@@ -73,16 +100,6 @@ public class RegistrationService {
         message.setText("Ваш код: " + code);
 
         mailSender.send(message);
-    }
-
-    public void updatePassword(PasswordRequest passwordRequest) {
-        User updateUser = userRepository.findById(passwordRequest.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Not found user by id = " + passwordRequest.getId()));
-        if (!isPasswordValid(passwordRequest.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
-        updateUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
-        userRepository.save(updateUser);
     }
 
     private boolean isPasswordValid(String password) {
