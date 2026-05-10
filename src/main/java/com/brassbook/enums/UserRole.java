@@ -1,6 +1,7 @@
 package com.brassbook.enums;
 
 public enum UserRole {
-    USER,
-    CORPORATE
+    ROLE_COMPANY,
+    ROLE_PERSONAL,
+    ROLE_ANONYMOUS
 }
