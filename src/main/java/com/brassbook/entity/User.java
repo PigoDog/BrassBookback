@@ -23,6 +23,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "display_name", length = 100)
+    private String displayName;
+
+    @Column(name = "display_surname", length = 100)
+    private String displaySurname;
+
     @Column(nullable = false, unique = true)
     private String email;
 
