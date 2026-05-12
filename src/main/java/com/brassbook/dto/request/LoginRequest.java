@@ -9,7 +9,7 @@ import lombok.Data;
 public class LoginRequest {
     @NotBlank()
     @Size(max = 100)
-    @Email
+    @Email(message = "Введите корректную почту")
     private String email;
     @NotBlank()
     @Size(min = 8, max = 25)
