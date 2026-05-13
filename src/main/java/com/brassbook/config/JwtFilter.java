@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            username = jwtUtils.getEmail(jwt);  // теперь это ID пользователя
+            username = jwtUtils.getEmail(jwt);
             role = jwtUtils.getRole(jwt);
         }
 

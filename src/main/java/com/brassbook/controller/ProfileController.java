@@ -1,5 +1,6 @@
 package com.brassbook.controller;
 
+import com.brassbook.dto.request.ChangePasswordRequest;
 import com.brassbook.dto.request.UpdateProfileRequest;
 import com.brassbook.dto.response.ProfileResponse;
 import com.brassbook.service.ProfileService;
@@ -30,6 +31,15 @@ public class ProfileController {
             @Valid @RequestBody UpdateProfileRequest request) {
         Long userId = Long.valueOf(userDetails.getUsername());
         return ResponseEntity.ok(profileService.updateProfile(userId, request));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        Long userId = Long.valueOf(userDetails.getUsername());
+        profileService.changePassword(userId, request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
