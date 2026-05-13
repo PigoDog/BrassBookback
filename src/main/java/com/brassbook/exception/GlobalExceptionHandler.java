@@ -41,15 +41,30 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    @ExceptionHandler(value = {
-            IllegalArgumentException.class,
-            MethodArgumentNotValidException.class
-    })
-    public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception e) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestExceptions(IllegalArgumentException e) {
         log.info("Handle BadRequestExceptions", e);
         ErrorResponse error = new ErrorResponse(
                 "Bad request",
                 e.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.info("Handle MethodArgumentNotValidException", e);
+        String detailedMessage = e.getBindingResult().getAllErrors().stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("Неккоректные данные");
+
+        ErrorResponse error = new ErrorResponse(
+                "Bad request",
+                detailedMessage,
                 LocalDateTime.now()
         );
         return ResponseEntity

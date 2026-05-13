@@ -62,6 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         return path.startsWith("/api/v1/auth") ||
                 path.equals("/api/v1/sendCode") ||
+                path.equals("/api/v1/refreshCode") ||
                 path.equals("/api/v1/registration");
     }
 }

@@ -10,7 +10,7 @@ import lombok.Data;
 public class CodeRequest {
     @NotBlank()
     @Size(max = 100)
-    @Email
+    @Email(message = "Введите корректную почту")
     private String email;
     @NotNull()
     private Boolean isConfirmed;

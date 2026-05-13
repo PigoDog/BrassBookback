@@ -10,7 +10,7 @@ import lombok.Data;
 public class PasswordRequest {
     @NotBlank()
     @Size(max = 100)
-    @Email
+    @Email(message = "Введите корректную почту")
     private String email;
     @NotBlank()
     private String code;
