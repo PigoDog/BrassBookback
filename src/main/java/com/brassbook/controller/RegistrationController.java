@@ -3,6 +3,7 @@ package com.brassbook.controller;
 import com.brassbook.dto.request.CodeRequest;
 import com.brassbook.dto.request.PasswordRequest;
 import com.brassbook.dto.request.RegistrationRequest;
+import com.brassbook.dto.request.VerifyCodeRequest;
 import com.brassbook.dto.response.RegistrationResponse;
 import com.brassbook.service.RegistrationService;
 import jakarta.validation.Valid;
@@ -45,6 +46,15 @@ public class RegistrationController {
     ) {
         log.info("Called refreshCode");
         registrationService.refreshCode(codeRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/verifyCode")
+    public ResponseEntity<Void> verifyCode(
+            @RequestBody @Valid VerifyCodeRequest verifyCodeRequest
+    ) {
+        log.info("Called verifyCode");
+        registrationService.verifyCode(verifyCodeRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

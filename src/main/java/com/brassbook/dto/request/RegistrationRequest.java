@@ -2,7 +2,6 @@ package com.brassbook.dto.request;
 
 import com.brassbook.enums.UserRole;
 import com.brassbook.enums.UserStatus;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,8 +21,6 @@ public class RegistrationRequest {
     private UserRole roleName;
     @NotNull()
     private UserStatus status;
-    @NotBlank()
-    private String code;
     @Size(max = 25, message = "Имя не должно превышать 25 символов")
     private String firstName;
     @Size(max = 25, message = "Фамилия не должна превышать 25 символов")

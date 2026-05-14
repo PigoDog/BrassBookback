@@ -3,6 +3,7 @@ package com.brassbook.service;
 import com.brassbook.dto.request.CodeRequest;
 import com.brassbook.dto.request.PasswordRequest;
 import com.brassbook.dto.request.RegistrationRequest;
+import com.brassbook.dto.request.VerifyCodeRequest;
 import com.brassbook.dto.response.RegistrationResponse;
 import com.brassbook.entity.User;
 import com.brassbook.enums.UserRole;
@@ -41,12 +42,6 @@ public class RegistrationService {
         if (userToCreate.getRoleName() == UserRole.ROLE_COMPANY && isInvalidCompanyUser(userToCreate)) {
             throw new IllegalArgumentException("Некорректные данные для корпоративного пользователя");
         }
-
-        String savedCode = redisTemplate.opsForValue().get(userToCreate.getEmail());
-        if (savedCode == null || !savedCode.equals(userToCreate.getCode())) {
-            throw new IllegalArgumentException("Неверный код");
-        }
-
         User newUser = userDetailsService.createNewUser(userToCreate);
         return new RegistrationResponse(newUser.getId());
     }
@@ -71,15 +66,21 @@ public class RegistrationService {
         sendMailCode(codeRequest);
     }
 
+    public void verifyCode(VerifyCodeRequest verifyCodeRequest) {
+        if (!userRepository.existsByEmail(verifyCodeRequest.getEmail())) {
+            throw new IllegalArgumentException("Пользователя с таким email не существует");
+        }
+        String savedCode = redisTemplate.opsForValue().get(verifyCodeRequest.getEmail());
+        if (savedCode == null || !savedCode.equals(verifyCodeRequest.getCode())) {
+            throw new IllegalArgumentException("Неверный код");
+        }
+    }
+
     public void updatePassword(PasswordRequest passwordRequest) {
         User updateUser = userRepository.findByEmail(passwordRequest.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Пользователя с таким email не существует"));
         if (!isPasswordValid(passwordRequest.getPassword())) {
             throw new IllegalArgumentException("Неверный пароль");
-        }
-        String savedCode = redisTemplate.opsForValue().get(passwordRequest.getEmail());
-        if (savedCode == null || !savedCode.equals(passwordRequest.getCode())) {
-            throw new IllegalArgumentException("Неверный код");
         }
         updateUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
         userRepository.save(updateUser);
