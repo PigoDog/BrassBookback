@@ -75,6 +75,9 @@ public class ProfileService {
                 .displaySurname(user.getDisplaySurname())
                 .photoUrl(user.getPhotoUrl())
                 .role(user.getRole().name())
+                .companyName(user.getCompanyName())
+                .profession(user.getProfession())
+                .inn(user.getInn())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

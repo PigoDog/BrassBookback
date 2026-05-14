@@ -14,5 +14,10 @@ public class ProfileResponse {
     private String displaySurname;
     private String photoUrl;
     private String role;
+
+    private String companyName;
+    private String profession;
+    private Long inn;
+
     private LocalDateTime createdAt;
 }
