@@ -29,8 +29,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователя с таким email не существует"));
+
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getPassword(),
                 List.of(new SimpleGrantedAuthority(user.getRole().toString()))
         );
@@ -52,5 +53,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         return userRepository.save(user);
     }
-
 }
